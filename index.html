@@ -3,10 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>האתר הראשון שלי</title>
+    <title>האתר הראשון שלי - משחק סנייק</title>
+    <style>
+        #gameCanvas {
+            border: 1px solid black;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>ברוכים הבאים לאתר הראשון שלי!</h1>
-    <p>זה האתר הפשוט הראשון שלי, שנוצר בעזרת GitHub Pages.</p>
+    <h1>ברוכים הבאים למשחק הסנייק שלי!</h1>
+    <button id="startButton">התחל משחק</button>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const startButton = document.getElementById('startButton');
+
+        let snake = [{x: 200, y: 200}];
+        let direction = 'right';
+        let food = {};
+        let score = 0;
+
+        function createFood() {
+            food = {
+                x: Math.floor(Math.random() * (canvas.width / 10)) * 10,
+                y: Math.floor(Math.random() * (canvas.height / 10)) * 10
+            };
+        }
+
+        function drawSnake() {
+            snake.forEach(segment => {
+                ctx.fillStyle = 'green';
+                ctx.fillRect(segment.x, segment.y, 10, 10);
+            });
+        }
+
+        function drawFood() {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(food.x, food.y, 10, 10);
+        }
+
+        function moveSnake() {
+            const head = {x: snake[0].x, y: snake[0].y};
+
+            switch(direction) {
+                case 'up': head.y -= 10; break;
+                case 'down': head.y += 10; break;
+                case 'left': head.x -= 10; break;
+                case 'right': head.x += 10; break;
+            }
+
+            snake.unshift(head);
+
+            if (head.x === food.x && head.y === food.y) {
+                score++;
+                createFood();
+            } else {
+                snake.pop();
+            }
+        }
+
+        function checkCollision() {
+            const head = snake[0];
+            return (
+                head.x < 0 || head.x >= canvas.width ||
+                head.y < 0 || head.y >= canvas.height ||
+                snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)
+            );
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            moveSnake();
+            if (checkCollision()) {
+                alert('המשחק נגמר! הניקוד שלך: ' + score);
+                snake = [{x: 200, y: 200}];
+                direction = 'right';
+                score = 0;
+                createFood();
+                return;
+            }
+            drawSnake();
+            drawFood();
+            setTimeout(gameLoop, 100);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowUp': if (direction !== 'down') direction = 'up'; break;
+                case 'ArrowDown': if (direction !== 'up') direction = 'down'; break;
+                case 'ArrowLeft': if (direction !== 'right') direction = 'left'; break;
+                case 'ArrowRight': if (direction !== 'left') direction = 'right'; break;
+            }
+        });
+
+        startButton.addEventListener('click', () => {
+            canvas.style.display = 'block';
+            createFood();
+            gameLoop();
+        });
+    </script>
 </body>
 </html>
