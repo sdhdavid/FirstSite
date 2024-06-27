@@ -1,0 +1,31 @@
+body {
+     background-color: #f0f0f0;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     height: 100vh;
+     margin: 0;
+     font-family: Arial, sans-serif;
+   }
+
+   #game-board {
+     border: 2px solid #333;
+     background-color: #fff;
+   }
+
+   .snake {
+     background-color: #4CAF50;
+     border: 1px solid #45a049;
+   }
+
+   .food {
+     background-color: #FF5722;
+     border: 1px solid #f4511e;
+     border-radius: 50%;
+   }
+
+   #score {
+     text-align: center;
+     font-size: 24px;
+     margin-top: 20px;
+   }
